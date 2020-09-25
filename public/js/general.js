@@ -18,6 +18,18 @@ $(() => {
   // TODO: Listening real time
 
   // TODO: Firebase observador del cambio de estado
+  firebase.auth().onAuthStateChanged(user => {
+    if(user){
+      $('#btnInicioSesion').text('Salir')
+      if(user.photoURL){
+        $('#avatar').attr('src', user.photoURL)
+      }else{
+        $('#avatar').attr('src', 'imagenes/usuario_auth.png')
+      }
+    }else{
+      $('#btnInicioSesion').text('Iniciar Sesión')
+    }
+  })
   //$('#btnInicioSesion').text('Salir')
   //$('#avatar').attr('src', user.photoURL)
   //$('#avatar').attr('src', 'imagenes/usuario_auth.png')
@@ -26,9 +38,17 @@ $(() => {
 
   // TODO: Evento boton inicio sesion
   $('#btnInicioSesion').click(() => {
-    //$('#avatar').attr('src', 'imagenes/usuario.png')
-    // Materialize.toast(`Error al realizar SignOut => ${error}`, 4000)
-    
+    const user = firebase.auth().currentUser
+    if(user){
+      $('#btnInicioSesion').text('Iniciar sesión')
+      return firebase.auth().signOut().then(() => {
+        $('#avatar').attr('src', 'imagenes/usuario.png')
+        Materialize.toast(`SignOut correcto`, 4000)
+      })
+      .catch(error => {
+        Materialize.toast(`Error al realizar el SigOut ${error}`, 4000)
+      })
+    }
 
     $('#emailSesion').val('')
     $('#passwordSesion').val('')
